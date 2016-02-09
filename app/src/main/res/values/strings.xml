@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Happy Hour</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh" translatable="false">Refresh</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="action_map">Google Maps</string>
+    <string name="action_mail">Email</string>
+    <string name="title_activity_detail">This is the time</string>
+    <!-- Label for the location preference [CHAR LIMIT=30] -->
+    <string name="pref_location_label">Zone</string>
+
+    <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_location_key" translatable="false">zona</string>
+    <string name="que_hora_es"></string>
+    <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
+    <string name="pref_location_default" translatable="false">Spain</string>
+    <string name="action_share">Share</string>
+</resources>

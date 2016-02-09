@@ -77,7 +77,7 @@ public class CosasFragment extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_cosas, // The name of the layout ID.
                         R.id.list_item_cosas_textview, // The ID of the textview to populate.
-                        new ArrayList<String>());
+                        new ArrayList<String>()); 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_cosas);
         listView.setAdapter(mCosasAdapter);

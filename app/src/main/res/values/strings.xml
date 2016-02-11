@@ -11,8 +11,12 @@
 
     <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_key" translatable="false">zona</string>
-    <string name="que_hora_es"></string>
+    <string name="que_hora_es"> </string>
+    <string name="que_hora_es2">\u0020is now in the next hour:</string>
+    <string name="erroor">Wrong name</string>
+    <string name="erroor_toast">Please, insert a correct name</string>
     <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
-    <string name="pref_location_default" translatable="false">Spain</string>
+    <string name="pref_location_default" translatable="false">Madrid</string>
     <string name="action_share">Share</string>
+
 </resources>

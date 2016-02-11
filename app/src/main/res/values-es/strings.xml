@@ -6,4 +6,8 @@
     <string name="pref_location_label">Zona</string>
     <string name="title_activity_detail">Esta es la hora</string>
     <string name="title_activity_settings">Configuración</string>
+    <string name="que_hora_es">Ahora en </string>
+    <string name="que_hora_es2">, es la siguiente hora:</string>
+    <string name="erroor">Nombre incorrecto</string>
+    <string name="erroor_toast">Por favor, introduzca un nombre correcto</string>
 </resources>

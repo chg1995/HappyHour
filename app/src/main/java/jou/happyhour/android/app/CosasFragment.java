@@ -30,12 +30,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by root on 6/02/16.
  */
 public class CosasFragment extends Fragment {
     ArrayAdapter<String> mCosasAdapter;
+    private final String LOG_TAG = CosasFragment.class.getSimpleName();
+    private String fecha = null;
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
 
     public CosasFragment() {
     }
@@ -64,14 +76,22 @@ public class CosasFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    // Función para darle la vuelta a la fecha
+    public String formatDate(String fecha){
+        try {
+            String pattern = "(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})";
+            Pattern MY_PATTERN = Pattern.compile(pattern);
+            Matcher m = MY_PATTERN.matcher(fecha);
+            if (m.find()) return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + m.group(5);
+            else return "";
+        } catch (java.lang.NullPointerException e){
+            return getResources().getString(R.string.erroor_toast);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-
         mCosasAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
@@ -85,10 +105,11 @@ public class CosasFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String forecast = mCosasAdapter.getItem(position);
-                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+                String hora = mCosasAdapter.getItem(position);
+                Toast.makeText(getActivity(), formatDate(getFecha()), Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                        .putExtra(Intent.EXTRA_TEXT, hora);
                 startActivity(intent);
             }
         });
@@ -115,7 +136,7 @@ public class CosasFragment extends Fragment {
 
         private final String LOG_TAG = FetchCosasTask.class.getSimpleName();
 
-        private String[] getWeatherDataFromJson(String JsonStr, int numDays)
+        private String[] getTimeDataFromJson(String JsonStr, int numDays)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
@@ -139,18 +160,20 @@ public class CosasFragment extends Fragment {
                     JSONObject c = timeZone.getJSONObject(0);
                     JSONObject d = timeZone.getJSONObject(0);
                     String localTime = c.getString(WWO_LT);
-
+                    setFecha(localTime);
                     Float gmt = Float.parseFloat(d.getString(WWO_UTC));
+                    String que_hora_es = getResources().getString(R.string.que_hora_es);
+                    String que_hora_es2 = getResources().getString(R.string.que_hora_es2);
                     if (gmt < 0)
-                        resultStrs[i] = "Ahora en " + nombre + ", es la siguiente hora: \n\t" + localTime + " (GMT" + gmt.toString() + ")";
+                        resultStrs[i] = que_hora_es + " " + nombre + que_hora_es2 + "\n" + formatDate(getFecha()) + " (GMT" + gmt.toString() + ")";
                     else if (gmt == 0)
-                        resultStrs[i] = "Ahora en " + nombre + ", es la siguiente hora: \n\t" + localTime + " (GMT)";
+                        resultStrs[i] = que_hora_es + " " + nombre + que_hora_es2 + "\n" + formatDate(getFecha()) + " (GMT)";
                     else
-                        resultStrs[i] = "Ahora en " + nombre + ", es la siguiente hora: \n\t" + localTime + " (GMT+" + gmt.toString() + ")";
+                        resultStrs[i] = que_hora_es + " " + nombre + que_hora_es2 + "\n" + formatDate(getFecha()) + " (GMT+" + gmt.toString() + ")";
                 } catch(org.json.JSONException e){
                     e.printStackTrace();
-                    resultStrs[i] = "Nombre incorrecto" +
-                            "";
+                    resultStrs[i] = getResources().getString(R.string.erroor);
+                    setFecha(getResources().getString(R.string.erroor_toast));
                 }
 
             }
@@ -177,17 +200,14 @@ public class CosasFragment extends Fragment {
             String format = "json";
             String lang = "es";
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-
-                final String FORECAST_BASE_URL =
+                // Se construye la URL
+                final String HORA_BASE_URL =
                         "http://api.worldweatheronline.com/free/v2/tz.ashx?";
                 final String QUERY_PARAM = "q";
                 final String FORMAT_PARAM = "format";
                 final String KEY_PARAM = "key";
                 final String LANG_PARAM = "lang";
-                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                Uri builtUri = Uri.parse(HORA_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM, params[0])
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(KEY_PARAM, BuildConfig.HORA_MAP_API_KEY)
@@ -197,7 +217,7 @@ public class CosasFragment extends Fragment {
                 URL url = new URL(builtUri.toString());
 
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Se hace la petición a la API
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -244,7 +264,7 @@ public class CosasFragment extends Fragment {
             }
 
             try {
-                return getWeatherDataFromJson(cosasJsonStr, 1);
+                return getTimeDataFromJson(cosasJsonStr, 1);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -257,8 +277,8 @@ public class CosasFragment extends Fragment {
         protected void onPostExecute(String[] result) {
             if (result != null) {
                 mCosasAdapter.clear();
-                for (String dayForecastStr : result) {
-                    mCosasAdapter.add(dayForecastStr);
+                for (String horaStr : result) { // Solo hay uno xD
+                    mCosasAdapter.add(horaStr);
                 }
                 // New data is back from the server. Hooray!
             }

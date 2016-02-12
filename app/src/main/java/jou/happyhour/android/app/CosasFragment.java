@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,10 +37,11 @@ import java.util.regex.Pattern;
 /**
  * Created by root on 6/02/16.
  */
-public class CosasFragment extends Fragment {
+public class CosasFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     ArrayAdapter<String> mCosasAdapter;
     private final String LOG_TAG = CosasFragment.class.getSimpleName();
     private String fecha = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public String getFecha() {
         return fecha;
@@ -65,6 +67,11 @@ public class CosasFragment extends Fragment {
     }
 
     @Override
+    public void onRefresh() {
+        updateTime();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -76,22 +83,35 @@ public class CosasFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
     // Función para darle la vuelta a la fecha
-    public String formatDate(String fecha){
+    public String formatDate(String fecha) {
         try {
             String pattern = "(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})";
             Pattern MY_PATTERN = Pattern.compile(pattern);
             Matcher m = MY_PATTERN.matcher(fecha);
-            if (m.find()) return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + m.group(5);
+
+            if (m.find()) {
+                // Parece ser que la hora aparece con un minuto de retraso, así que le sumo un minuto aquí
+                Integer min = Integer.parseInt(m.group(5));
+                min=(min+1)%60;
+                if(min>=0 && min<=9){
+                    // Se le añade un cero a los números de una cifra
+                    StringBuffer s = new StringBuffer(min);
+                    s.append(0).toString();
+                    return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + s.append(min).toString();
+                }
+                return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + min.toString();
+            }
             else return "";
-        } catch (java.lang.NullPointerException e){
+        } catch (java.lang.NullPointerException e) {
             return getResources().getString(R.string.erroor_toast);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         mCosasAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
@@ -100,7 +120,17 @@ public class CosasFragment extends Fragment {
                         new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_cosas);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         listView.setAdapter(mCosasAdapter);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        updateTime();
+                                    }
+                                }
+        );
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -114,16 +144,17 @@ public class CosasFragment extends Fragment {
             }
         });
 
-
         return rootView;
     }
 
     private void updateTime() {
-        FetchCosasTask weatherTask = new FetchCosasTask();
+        swipeRefreshLayout.setRefreshing(true);
+        FetchCosasTask timeTask = new FetchCosasTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
-        weatherTask.execute(location);
+        timeTask.execute(location);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -170,7 +201,7 @@ public class CosasFragment extends Fragment {
                         resultStrs[i] = que_hora_es + " " + nombre + que_hora_es2 + "\n" + formatDate(getFecha()) + " (GMT)";
                     else
                         resultStrs[i] = que_hora_es + " " + nombre + que_hora_es2 + "\n" + formatDate(getFecha()) + " (GMT+" + gmt.toString() + ")";
-                } catch(org.json.JSONException e){
+                } catch (org.json.JSONException e) {
                     e.printStackTrace();
                     resultStrs[i] = getResources().getString(R.string.erroor);
                     setFecha(getResources().getString(R.string.erroor_toast));

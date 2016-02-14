@@ -92,16 +92,23 @@ public class CosasFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             Matcher m = MY_PATTERN.matcher(fecha);
 
             if (m.find()) {
-                // Parece ser que la hora aparece con un minuto de retraso, así que le sumo un minuto aquí
+                /*// Parece ser que la hora aparece con un minuto de retraso, así que le sumo un minuto aquí
                 Integer min = Integer.parseInt(m.group(5));
                 min=(min+1)%60;
                 if(min>=0 && min<=9){
                     // Se le añade un cero a los números de una cifra
                     StringBuffer s = new StringBuffer(min);
-                    s.append(0).toString();
+                    s.append(0);
+                    Integer hor = Integer.parseInt(m.group(4));
+                    if(hor>=0 && hor<=9){
+                        StringBuffer s2 = new StringBuffer(min);
+                        s2.append(0);
+                        return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + s2.append(hor).toString() + ":" + s.append(min).toString();
+                    }
                     return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + s.append(min).toString();
                 }
-                return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + min.toString();
+                return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + min.toString();*/
+                return m.group(3) + "-" + m.group(2) + "-" + m.group(1) + " " + m.group(4) + ":" + m.group(5);
             }
             else return "";
         } catch (java.lang.NullPointerException e) {

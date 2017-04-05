@@ -128,6 +128,14 @@
 		    <artifactId>support-v4</artifactId>
 		    <version>19.0.1</version>
 		</dependency>
+		
+		<dependency>
+		      <groupId>com.android.support</groupId>
+		      <artifactId>support-v4</artifactId>
+		      <version>21.0.2</version>
+		      <type>aar</type>     
+		      <scope>compile</scope>
+		    </dependency>
 
 		<!-- Spring Boot Admin -->
 		<dependency>

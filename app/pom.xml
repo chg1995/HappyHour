@@ -124,11 +124,16 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.android.support</groupId>
+			    <artifactId>support-v13</artifactId>
+			    <version>21.0.3</version>
+			    <type>aar</type>
 			<exclusions>
 				<exclusion>
 				    <groupId>com.android.support</groupId>
 				    <artifactId>support-v4</artifactId>
 				</exclusion>
+				
 				<exclusion>
 				    <groupId>com.android.support</groupId>
 				    <artifactId>support-v7</artifactId>

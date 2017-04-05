@@ -121,13 +121,6 @@
 		    <artifactId>android</artifactId>
 		    <version>4.1.1.4</version>
 		    <scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.android.support</groupId>
-			    <artifactId>support-v13</artifactId>
-			    <version>21.0.3</version>
-			    <type>aar</type>
 			<exclusions>
 				<exclusion>
 				    <groupId>com.android.support</groupId>
@@ -140,6 +133,15 @@
 				</exclusion>
 			    </exclusions>
 		</dependency>
+		<!--
+		<dependency>
+			<groupId>com.android.support</groupId>
+			    <artifactId>support-v13</artifactId>
+			    <version>21.0.3</version>
+			    <type>aar</type>
+			
+		</dependency>
+-->
 		<!--
 		<dependency>
 		      <groupId>com.android.support</groupId>

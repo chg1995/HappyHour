@@ -124,9 +124,6 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>com.android.support</groupId>
-		    <artifactId>support-v7</artifactId>
-		    <version>19.0.1</version>
 			<exclusions>
 				<exclusion>
 				    <groupId>com.android.support</groupId>

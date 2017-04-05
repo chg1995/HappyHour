@@ -125,10 +125,16 @@
 		
 		<dependency>
 		    <groupId>com.android.support</groupId>
-		    <artifactId>support-v4</artifactId>
+		    <artifactId>support-v7</artifactId>
 		    <version>19.0.1</version>
+			<exclusions>
+				<exclusion>
+				    <groupId>com.android.support</groupId>
+				    <artifactId>support-v4</artifactId>
+				</exclusion>
+			    </exclusions>
 		</dependency>
-		
+		<!--
 		<dependency>
 		      <groupId>com.android.support</groupId>
 		      <artifactId>support-v4</artifactId>
@@ -136,7 +142,7 @@
 		      <type>aar</type>     
 		      <scope>compile</scope>
 		    </dependency>
-
+-->
 		<!-- Spring Boot Admin -->
 		<dependency>
 		    <groupId>de.codecentric</groupId>
